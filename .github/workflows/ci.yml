@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:${{ env.POSTGRES_VERSION }}
+        image: postgres:${{ env.POSTGRES_VERSION}}
         env:
           POSTGRES_DB: travelparadise_test
           POSTGRES_USER: postgres
@@ -30,44 +30,44 @@ jobs:
         ports:
           - 5432:5432
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ env.PHP_VERSION }}
-        extensions: mbstring, intl, pdo_pgsql, zip, xdebug
-        coverage: xdebug
-    - name: Cache Composer dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.composer/cache
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-    - name: Install Composer dependencies
-      working-directory: ./admin_web
-      run: composer install --prefer-dist --no-progress --no-interaction
-    - name: Create .env.test file
-      working-directory: ./admin_web
-      run: |
-        cp .env .env.test
-        sed -i 's/DATABASE_URL=.*/DATABASE_URL="pgsql:\/\/postgres:postgres@127.0.0.1:5432\/travelparadise_test"/' .env.test
-    - name: Run database migrations
-      working-directory: ./admin_web
-      run: |
-        php bin/console doctrine:database:create --env=test --if-not-exists
-        php bin/console doctrine:migrations:migrate --env=test --no-interaction
-    - name: Run PHPUnit tests
-      working-directory: ./admin_web
-      run: |
-        php bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./admin_web/coverage.xml
-        flags: php-unit
-        name: php-unit-coverage
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, intl, pdo_pgsql, zip, xdebug
+          coverage: xdebug
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install Composer dependencies
+        working-directory: ./admin_web
+        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Create .env.test file
+        working-directory: ./admin_web
+        run: |
+          cp .env .env.test
+          sed -i 's/DATABASE_URL=.*/DATABASE_URL="pgsql:\/\/postgres:postgres@127.0.0.1:5432\/travelparadise_test"/' .env.test
+      - name: Run database migrations
+        working-directory: ./admin_web
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:migrations:migrate --env=test --no-interaction
+      - name: Run PHPUnit tests
+        working-directory: ./admin_web
+        run: |
+          php bin/phpunit --coverage-clover=coverage.xml --coverage-html=coverage-html
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./admin_web/coverage.xml
+          flags: php-unit
+          name: php-unit-coverage
 
   php-functional-tests:
     name: Tests fonctionnels (Behat)
@@ -75,7 +75,7 @@ jobs:
     needs: php-unit-tests
     services:
       postgres:
-        image: postgres:${{ env.POSTGRES_VERSION }}
+        image: postgres:${{ env.POSTGRES_VERSION}}
         env:
           POSTGRES_DB: travelparadise_behat
           POSTGRES_USER: postgres
@@ -88,156 +88,156 @@ jobs:
         ports:
           - 5432:5432
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ env.PHP_VERSION }}
-        extensions: mbstring, intl, pdo_pgsql, zip
-    - name: Install Composer dependencies
-      working-directory: ./admin_web
-      run: composer install --prefer-dist --no-progress --no-interaction
-    - name: Install Behat
-      working-directory: ./admin_web
-      run: composer require --dev behat/behat behat/mink behat/mink-extension
-    - name: Setup test database
-      working-directory: ./admin_web
-      run: |
-        php bin/console doctrine:database:create --env=test --if-not-exists
-        php bin/console doctrine:migrations:migrate --env=test --no-interaction
-    - name: Run Behat tests
-      working-directory: ./admin_web
-      run: |
-        ./vendor/bin/behat --format=progress
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, intl, pdo_pgsql, zip
+      - name: Install Composer dependencies
+        working-directory: ./admin_web
+        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install Behat
+        working-directory: ./admin_web
+        run: composer require --dev behat/behat behat/mink behat/mink-extension
+      - name: Setup test database
+        working-directory: ./admin_web
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:migrations:migrate --env=test --no-interaction
+      - name: Run Behat tests
+        working-directory: ./admin_web
+        run: |
+          ./vendor/bin/behat --format=progress
 
   performance-tests:
     name: Tests de performance (K6)
     runs-on: ubuntu-latest
     needs: php-unit-tests
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup K6
-      uses: grafana/k6-action@v0.3.0
-      with:
-        filename: k6-tests/load-test.js
-    - name: Run K6 performance tests
-      run: |
-        k6 run k6-tests/load-test.js
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup K6
+        uses: grafana/k6-action@v0.3.0
+        with:
+          filename: k6-tests/load-test.js
+      - name: Run K6 performance tests
+        run: |
+          k6 run k6-tests/load-test.js
 
   react-native-tests:
     name: Tests unitaires React Native (Jest)
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: './travelparadise_guide - essai/package-lock.json'
-    - name: Install dependencies
-      working-directory: ./travelparadise_guide - essai
-      run: npm ci
-    - name: Install Jest
-      working-directory: ./travelparadise_guide - essai
-      run: npm install --save-dev jest @testing-library/react-native @testing-library/jest-native
-    - name: Run Jest tests
-      working-directory: ./travelparadise_guide - essai
-      run: |
-        npm test -- --coverage --watchAll=false
-    - name: Upload Jest coverage
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./travelparadise_guide - essai/coverage/lcov.info
-        flags: react-native
-        name: react-native-coverage
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './travelparadise_guide - essai/package-lock.json'
+      - name: Install dependencies
+        working-directory: ./travelparadise_guide - essai
+        run: npm ci
+      - name: Install Jest
+        working-directory: ./travelparadise_guide - essai
+        run: npm install --save-dev jest @testing-library/react-native @testing-library/jest-native
+      - name: Run Jest tests
+        working-directory: ./travelparadise_guide - essai
+        run: |
+          npm test -- --coverage --watchAll=false
+      - name: Upload Jest coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./travelparadise_guide - essai/coverage/lcov.info
+          flags: react-native
+          name: react-native-coverage
 
   e2e-tests:
     name: Tests E2E (Cypress)
     runs-on: ubuntu-latest
     needs: [php-unit-tests, react-native-tests]
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-    - name: Install Cypress
-      run: npm install cypress
-    - name: Run Cypress tests
-      run: |
-        npx cypress run --config baseUrl=http://localhost:8000
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Cypress
+        run: npm install cypress
+      - name: Run Cypress tests
+        run: |
+          npx cypress run --config baseUrl=http://localhost:8000
 
   php-code-quality:
     name: Qualité du code PHP
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ env.PHP_VERSION }}
-    - name: Install Composer dependencies
-      working-directory: ./admin_web
-      run: composer install --prefer-dist --no-progress --no-interaction
-    - name: Install PHP_CodeSniffer
-      working-directory: ./admin_web
-      run: composer require --dev squizlabs/php_codesniffer
-    - name: Run PHP_CodeSniffer
-      working-directory: ./admin_web
-      run: |
-        ./vendor/bin/phpcs src/ --standard=PSR12 --report=checkstyle --report-file=phpcs-report.xml
-    - name: Run PHPStan static analysis
-      working-directory: ./admin_web
-      run: |
-        composer require --dev phpstan/phpstan
-        ./vendor/bin/phpstan analyse src --level=8
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+      - name: Install Composer dependencies
+        working-directory: ./admin_web
+        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Install PHP_CodeSniffer
+        working-directory: ./admin_web
+        run: composer require --dev squizlabs/php_codesniffer
+      - name: Run PHP_CodeSniffer
+        working-directory: ./admin_web
+        run: |
+          ./vendor/bin/phpcs src/ --standard=PSR12 --report=checkstyle --report-file=phpcs-report.xml
+      - name: Run PHPStan static analysis
+        working-directory: ./admin_web
+        run: |
+          composer require --dev phpstan/phpstan
+          ./vendor/bin/phpstan analyse src --level=8
 
   js-code-quality:
     name: Qualité du code JavaScript
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: './travelparadise_guide - essai/package-lock.json'
-    - name: Install dependencies
-      working-directory: ./travelparadise_guide - essai
-      run: npm ci
-    - name: Install ESLint and Prettier
-      working-directory: ./travelparadise_guide - essai
-      run: |
-        npm install --save-dev eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin
-    - name: Run ESLint
-      working-directory: ./travelparadise_guide - essai
-      run: npx eslint src/ --ext .js,.jsx,.ts,.tsx --format=checkstyle --output-file=eslint-report.xml
-    - name: Run Prettier check
-      working-directory: ./travelparadise_guide - essai
-      run: npx prettier --check src/
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './travelparadise_guide - essai/package-lock.json'
+      - name: Install dependencies
+        working-directory: ./travelparadise_guide - essai
+        run: npm ci
+      - name: Install ESLint and Prettier
+        working-directory: ./travelparadise_guide - essai
+        run: |
+          npm install --save-dev eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin
+      - name: Run ESLint
+        working-directory: ./travelparadise_guide - essai
+        run: npx eslint src/ --ext .js,.jsx,.ts,.tsx --format=checkstyle --output-file=eslint-report.xml
+      - name: Run Prettier check
+        working-directory: ./travelparadise_guide - essai
+        run: npx prettier --check src/
 
   docker-build:
     name: Build et tests Docker
     runs-on: ubuntu-latest
     needs: [php-unit-tests, react-native-tests, php-code-quality, js-code-quality]
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    - name: Build Docker images
-      run: |
-        docker build -t travelparadise-backend ./admin_web
-        docker build -t travelparadise-mobile ./travelparadise_guide\ -\ essai
-    - name: Test Docker images
-      run: |
-        docker run --rm travelparadise-backend php bin/console --version
-        docker run --rm travelparadise-mobile node --version 
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker images
+        run: |
+          docker build -t travelparadise-backend ./admin_web
+          docker build -t travelparadise-mobile ./travelparadise_guide\ -\ essai
+      - name: Test Docker images
+        run: |
+          docker run --rm travelparadise-backend php bin/console --version
+          docker run --rm travelparadise-mobile node --version 
