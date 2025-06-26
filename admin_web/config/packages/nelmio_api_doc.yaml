@@ -1,0 +1,12 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Travel Paradise API
+            description: Documentation Swagger de votre API Symfony
+            version: 1.0.0
+        
+    areas:
+        default:
+            path_patterns:
+                - ^/api
+
