@@ -1,0 +1,13 @@
+nelmio_cors:
+    defaults:
+        allow_origin: ['*'] # 👈 à restreindre plus tard si besoin
+        allow_methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization']
+        max_age: 3600
+    paths:
+        '^/api/':
+            allow_origin: ['http://localhost:8081''http://localhost:8082',]
+            allow_headers: ['Content-Type', 'Authorization']
+            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+            max_age: 3600
+

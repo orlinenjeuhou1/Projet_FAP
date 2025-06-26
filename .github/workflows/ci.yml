@@ -3,6 +3,8 @@ name: CI - Travel Paradise
 on:
   pull_request:
     branches: [ dev ]
+  push:
+    branches: [ feature-ci-cd ]
 
 env:
   PHP_VERSION: '8.2'
@@ -19,7 +21,7 @@ jobs:
         env:
           POSTGRES_DB: travelparadise_test
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: postgresorline
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

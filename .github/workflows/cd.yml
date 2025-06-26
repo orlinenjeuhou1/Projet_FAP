@@ -2,7 +2,7 @@ name: CD - Travel Paradise
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, feature-ci-cd ]
 
 env:
   PHP_VERSION: '8.2'
